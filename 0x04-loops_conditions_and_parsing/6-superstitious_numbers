@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script is displaying "Holberton School" 10 times
+# This script is displaying "bad luck" 10 times
 index=1
 while ((index <= 20))
 do
