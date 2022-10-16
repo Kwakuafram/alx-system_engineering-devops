@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Client configuration file
+Host ubuntu
+    HostName 3.238.30.175
+    IdentityFile ~/.ssh/school
+    PubkeyAuthentication no
