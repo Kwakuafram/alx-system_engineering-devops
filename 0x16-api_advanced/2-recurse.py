@@ -1,28 +1,33 @@
 #!/usr/bin/python3
-"""task 3"""
-from requests import get
+""" recursive function that queries the Reddit API """
+import requests
+import sys
+after = None
 
 
-def recurse(subreddit, hot_list=[], after=None):
-    """function that queries the Reddit API"""
-    res = get("https://www.reddit.com/r/{}/hot.json".format(subreddit),
-              headers={"User-Agent": "Klich from Holberton"},
-              allow_redirects=False,
-              params={"after": after, "limit": 10})
-    # print(res, hot_list, after)
-    if res.status_code == 200:
-        search = res.json().get('data').get('children')
-        # print(hot)
-        if search:
-            hot_list += search
-            after = res.json().get('data').get('after')
-            # print("hot_list =", hot_list)
-            # print("*"*100)
-            # print("after =", after)
-            if after is None:
-                return hot_list
-            return recurse(subreddit, hot_list, after)
-        else:
-            return None
+def recurse(subreddit, hot_list=[]):
+    """     Args:
+        subreddit: subreddit name
+        hot_list: list of hot titles in subreddit
+        after: last hot_item appended to hot_list
+    Returns:
+        a list containing the titles of all hot articles for the subreddit
+        or None if queried subreddit is invalid """
+    global after
+    headers = {'User-Agent': 'xica369'}
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    parameters = {'after': after}
+    response = requests.get(url, headers=headers, allow_redirects=False,
+                            params=parameters)
+
+    if response.status_code == 200:
+        next_ = response.json().get('data').get('after')
+        if next_ is not None:
+            after = next_
+            recurse(subreddit, hot_list)
+        list_titles = response.json().get('data').get('children')
+        for title_ in list_titles:
+            hot_list.append(title_.get('data').get('title'))
+        return hot_list
     else:
-        return None
+        return (None)

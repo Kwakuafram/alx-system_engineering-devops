@@ -1,21 +1,25 @@
 #!/usr/bin/python3
-"""task 1"""
-import requests
+'''prints titles of first 10 hot posts listed for a given subreddit'''
+from requests import get
 
 
 def top_ten(subreddit):
-    """Write a function that queries the Reddit API"""
+    '''
+    Description:
+        - queries Reddit API to print first 10 host posts
+    Output:
+        - Success: prints first 10 host posts listed
+          for a given subreddit
+        - Failure: print None
+    '''
+    endpoint = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
+    headers = {'User-Agent': 'My User Agent 1.0'}
+    params = {'limit': 10}
+    res = get(endpoint, headers=headers, allow_redirects=False, params=params)
 
-    url = 'https://www.reddit.com/r/{}/hot.json?limit=10'.format(subreddit)
-    req = requests.get(url)
-
-    if (req.status_code != 200):
+    if res.status_code != 200:
         print(None)
         return
 
-    try:
-        childrens = req.json().get('data').get('children')
-        for children in childrens:
-            print(children.get('data').get('title'))
-    except Exception:
-        pass
+    top_10 = res.json()['data']['children']
+    [print(post['data']['title']) for post in top_10]
